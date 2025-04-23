@@ -21,25 +21,7 @@
     let currentLat = null;
     let currentLng = null;
 
-    const teeCoords = {
-      1: [37.875870, 23.744698],
-      2: [37.872588, 23.745419],
-      3: [37.870082, 23.746206],
-      4: [37.872918, 23.749705],
-      5: [37.870113, 23.747329],
-      6: [37.870592, 23.747080],
-      7: [37.868899, 23.744773],
-      8: [37.873489, 23.744547],
-      9: [37.872542, 23.743443],
-      10: [37.876320, 23.744957],
-      11: [37.872389, 23.746448],
-      12: [37.873878, 23.750189],
-      13: [37.874274, 23.747710],
-      14: [37.876700, 23.748195],
-      15: [37.872939, 23.746626],
-      16: [37.876809, 23.745267],
-      17: [37.875992, 23.746849],
-      18: [37.877963, 23.748709]};
+    const teeCoords = {};
 
     function getLocationAndCalculate() {
       if (navigator.geolocation) {
@@ -75,79 +57,49 @@
     }
 
     function findNearestTeeAndCalculate() {
-      const holeCoords = {
-        1: [37.872972, 23.745222],
-        2: [37.869878, 23.745752],
-        3: [37.872799, 23.749097],
-        4: [37.870508, 23.747861],
-        5: [37.871353, 23.747702],
-        6: [37.868245, 23.745087],
-        7: [37.872509, 23.744781],
-        8: [37.872088, 23.743959],
-        9: [37.875741, 23.744238],
-        10: [37.872698, 23.745887],
-        11: [37.873634, 23.749619],
-        12: [37.874012, 23.748292],
-        13: [37.877053, 23.749069],
-        14: [37.873509, 23.747084],
-        15: [37.876446, 23.745403],
-        16: [37.876524, 23.746613],
-        17: [37.877746, 23.749302],
-        18: [37.876899, 23.745765]
+      const holeAreas = {
+        1: [ [37.8761785, 23.7445943], [37.8730705, 23.7452166] ],
+        2: [ [37.8726545, 23.7453905], [37.8699951, 23.7457767] ],
+        3: [ [37.8699359, 23.7460556], [37.8716297, 23.7468067], [37.8722818, 23.7478474], [37.8728831, 23.7490705] ],
+        4: [ [37.8727731, 23.7495532], [37.8717144, 23.7488773], [37.8715111, 23.7486949], [37.8714349, 23.7488237], [37.8714095, 23.7484053], [37.8711385, 23.7486306], [37.8711216, 23.74818], [37.8709183, 23.7481907], [37.8708421, 23.7482121], [37.8708251, 23.7478152], [37.8706558, 23.7478044], [37.8704864, 23.7478582] ],
+        5: [ [37.8700629, 23.7473002], [37.8705372, 23.7472895], [37.870588, 23.7474504], [37.8708675, 23.7473646], [37.8709606, 23.7475684], [37.8711131, 23.7474289], [37.8711385, 23.747665], [37.8713841, 23.747504], [37.8712655, 23.7478152], [37.871401, 23.7477615] ],
+        6: [ [37.8705248, 23.7455152], [37.8699843, 23.7447954], [37.8693011, 23.7450115], [37.8688525, 23.7447202] ],
+        7: [ [37.8688391, 23.7447403], [37.8692141, 23.7451539], [37.869402, 23.7454811], [37.8695292, 23.7456755], [37.8697712, 23.7459837], [37.8700727, 23.7464527] ],
+        8: [ [37.8700473, 23.7466888], [37.8697736, 23.7462703], [37.8695432, 23.7459986], [37.8691905, 23.7455924], [37.8689888, 23.7453763], [37.8686092, 23.7449388] ],
+        9: [ [37.8686054, 23.7449119], [37.8690844, 23.7453962], [37.869401, 23.7457226], [37.8697121, 23.7460606], [37.8700535, 23.7463759] ]
       };
 
       let nearestHole = null;
-      let shortestDistanceToLine = Infinity;
-
-      for (const hole of Object.keys(teeCoords)) {
-        const [teeLat, teeLng] = teeCoords[hole];
-        const [greenLat, greenLng] = holeCoords[hole];
-
-        // 직선 거리 계산 (티박스 ~ 그린 선분에서 현재 위치까지 거리)
-        const d = distanceToLine(currentLat, currentLng, teeLat, teeLng, greenLat, greenLng);
-
-        if (d < shortestDistanceToLine) {
-          shortestDistanceToLine = d;
+      for (const [hole, polygon] of Object.entries(holeAreas)) {
+        if (isInsidePolygon(polygon, [currentLat, currentLng])) {
           nearestHole = hole;
+          break;
         }
       }
 
-      const [targetGreenLat, targetGreenLng] = holeCoords[nearestHole];
-      const distanceToGreen = calculateDistance(currentLat, currentLng, targetGreenLat, targetGreenLng);
-      const distanceYards = (distanceToGreen * 1.09361).toFixed(1);
-
-      document.getElementById("result").innerHTML = `가장 가까운 홀(경로 기준): ${nearestHole}번홀<br>그린까지 거리: ${distanceYards} 야드`;
-    }
-
-    function distanceToLine(px, py, x1, y1, x2, y2) {
-      // 현재 위치(px, py)에서 선분(x1, y1)-(x2, y2)까지의 최소 거리 (단순 유클리드 기반)
-      const A = px - x1;
-      const B = py - y1;
-      const C = x2 - x1;
-      const D = y2 - y1;
-
-      const dot = A * C + B * D;
-      const len_sq = C * C + D * D;
-      let param = -1;
-      if (len_sq !== 0) param = dot / len_sq;
-
-      let xx, yy;
-
-      if (param < 0) {
-        xx = x1;
-        yy = y1;
-      } else if (param > 1) {
-        xx = x2;
-        yy = y2;
+      if (nearestHole) {
+        document.getElementById("result").innerHTML = `현재 위치는 ${nearestHole}번홀 내에 있습니다.`;
       } else {
-        xx = x1 + param * C;
-        yy = y1 + param * D;
+        document.getElementById("result").innerHTML = `현재 위치가 어떤 홀 내부에도 없습니다.`;
       }
-
-      const dx = px - xx;
-      const dy = py - yy;
-      return Math.sqrt(dx * dx + dy * dy) * 111139; // degree → meters;
     }
-  </script>
+    }
+
+    
+    }
+  function isInsidePolygon(polygon, point) {
+  let x = point[1], y = point[0];
+  let inside = false;
+  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+    const xi = polygon[i][1], yi = polygon[i][0];
+    const xj = polygon[j][1], yj = polygon[j][0];
+
+    const intersect = ((yi > y) !== (yj > y)) &&
+      (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+    if (intersect) inside = !inside;
+  }
+  return inside;
+}
+</script>
 </body>
 </html>
