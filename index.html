@@ -6,14 +6,37 @@
   <title>골프 캐디 GPS 도우미</title>
   <style>
     body { font-family: sans-serif; padding: 1rem; }
-    label, input, button { display: block; margin: 0.5rem 0; }
+    label, input, button, select { display: block; margin: 0.5rem 0; }
     .output { margin-top: 1rem; padding: 1rem; border: 1px solid #ccc; border-radius: 10px; }
   </style>
 </head>
 <body>
-  <h2>골프 캐디 GPS 도우미</h2>
+  <h2>골프 캐디 GPS 도우미 - Glyfada Golf Club</h2>
   <button onclick="getLocation()">현재 위치 확인</button>
   <div id="current"></div>
+
+  <label for="hole-select">홀 선택:</label>
+  <select id="hole-select" onchange="setGreenCoordinates()">
+    <option value="">-- 홀을 선택하세요 --</option>
+    <option value="1">1번홀</option>
+    <option value="2">2번홀</option>
+    <option value="3">3번홀</option>
+    <option value="4">4번홀</option>
+    <option value="5">5번홀</option>
+    <option value="6">6번홀</option>
+    <option value="7">7번홀</option>
+    <option value="8">8번홀</option>
+    <option value="9">9번홀</option>
+    <option value="10">10번홀</option>
+    <option value="11">11번홀</option>
+    <option value="12">12번홀</option>
+    <option value="13">13번홀</option>
+    <option value="14">14번홀</option>
+    <option value="15">15번홀</option>
+    <option value="16">16번홀</option>
+    <option value="17">17번홀</option>
+    <option value="18">18번홀</option>
+  </select>
 
   <label for="green-lat">그린 위도:</label>
   <input type="number" step="any" id="green-lat">
@@ -27,6 +50,27 @@
     let currentLat = null;
     let currentLng = null;
 
+    const holeCoords = {
+      1: [37.872972, 23.745222],
+      2: [37.869878, 23.745752],
+      3: [37.872799, 23.749097],
+      4: [37.870508, 23.747861],
+      5: [37.871353, 23.747702],
+      6: [37.868245, 23.745087],
+      7: [37.872509, 23.744781],
+      8: [37.872088, 23.743959],
+      9: [37.875741, 23.744238],
+      10: [37.872698, 23.745887],
+      11: [37.873634, 23.749619],
+      12: [37.874012, 23.748292],
+      13: [37.877053, 23.749069],
+      14: [37.873509, 23.747084],
+      15: [37.876446, 23.745403],
+      16: [37.876524, 23.746613],
+      17: [37.877746, 23.749302],
+      18: [37.876899, 23.745765]
+    };
+
     function getLocation() {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(position => {
@@ -38,6 +82,14 @@
         });
       } else {
         alert("이 브라우저는 GPS를 지원하지 않습니다.");
+      }
+    }
+
+    function setGreenCoordinates() {
+      const hole = document.getElementById("hole-select").value;
+      if (holeCoords[hole]) {
+        document.getElementById("green-lat").value = holeCoords[hole][0];
+        document.getElementById("green-lng").value = holeCoords[hole][1];
       }
     }
 
@@ -54,7 +106,7 @@
         return;
       }
 
-      const R = 6371e3; // 지구 반지름 (미터)
+      const R = 6371e3;
       const φ1 = toRadians(currentLat);
       const φ2 = toRadians(greenLat);
       const Δφ = toRadians(greenLat - currentLat);
