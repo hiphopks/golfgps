@@ -12,8 +12,6 @@
 </head>
 <body>
   <h2>골프 캐디 GPS 도우미 - Glyfada Golf Club</h2>
-  <button onclick="getLocation()">현재 위치 확인</button>
-  <div id="current"></div>
 
   <label for="hole-select">홀 선택:</label>
   <select id="hole-select" onchange="setGreenCoordinates()">
@@ -43,7 +41,8 @@
   <label for="green-lng">그린 경도:</label>
   <input type="number" step="any" id="green-lng">
 
-  <button onclick="calculateDistance()">거리 계산</button>
+  <button onclick="getLocationAndCalculate()">현재 위치 확인 및 거리 계산</button>
+  <div id="current"></div>
   <div class="output" id="result"></div>
 
   <script>
@@ -71,12 +70,13 @@
       18: [37.876899, 23.745765]
     };
 
-    function getLocation() {
+    function getLocationAndCalculate() {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(position => {
           currentLat = position.coords.latitude;
           currentLng = position.coords.longitude;
           document.getElementById("current").innerText = `현재 위치: 위도 ${currentLat}, 경도 ${currentLng}`;
+          calculateDistance();
         }, error => {
           alert("위치 정보를 가져올 수 없습니다: " + error.message);
         });
