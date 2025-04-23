@@ -21,26 +21,25 @@
     let currentLat = null;
     let currentLng = null;
 
-    const holeCoords = {
-      1: [37.872972, 23.745222],
-      2: [37.869878, 23.745752],
-      3: [37.872799, 23.749097],
-      4: [37.870508, 23.747861],
-      5: [37.871353, 23.747702],
-      6: [37.868245, 23.745087],
-      7: [37.872509, 23.744781],
-      8: [37.872088, 23.743959],
-      9: [37.875741, 23.744238],
-      10: [37.872698, 23.745887],
-      11: [37.873634, 23.749619],
-      12: [37.874012, 23.748292],
-      13: [37.877053, 23.749069],
-      14: [37.873509, 23.747084],
-      15: [37.876446, 23.745403],
-      16: [37.876524, 23.746613],
-      17: [37.877746, 23.749302],
-      18: [37.876899, 23.745765]
-    };
+    const teeCoords = {
+      1: [37.875870, 23.744698],
+      2: [37.872588, 23.745419],
+      3: [37.870082, 23.746206],
+      4: [37.872918, 23.749705],
+      5: [37.870113, 23.747329],
+      6: [37.870592, 23.747080],
+      7: [37.868899, 23.744773],
+      8: [37.873489, 23.744547],
+      9: [37.872542, 23.743443],
+      10: [37.876320, 23.744957],
+      11: [37.872389, 23.746448],
+      12: [37.873878, 23.750189],
+      13: [37.874274, 23.747710],
+      14: [37.876700, 23.748195],
+      15: [37.872939, 23.746626],
+      16: [37.876809, 23.745267],
+      17: [37.875992, 23.746849],
+      18: [37.877963, 23.748709]};
 
     function getLocationAndCalculate() {
       if (navigator.geolocation) {
@@ -48,7 +47,7 @@
           currentLat = position.coords.latitude;
           currentLng = position.coords.longitude;
           document.getElementById("current").innerText = `현재 위치: 위도 ${currentLat}, 경도 ${currentLng}`;
-          findNearestGreenAndCalculate();
+          findNearestTeeAndCalculate();
         }, error => {
           alert("위치 정보를 가져올 수 없습니다: " + error.message);
         });
@@ -75,11 +74,11 @@
       return R * c;
     }
 
-    function findNearestGreenAndCalculate() {
+    function findNearestTeeAndCalculate() {
       let nearestHole = null;
       let shortestDistance = Infinity;
 
-      for (const [hole, [lat, lng]] of Object.entries(holeCoords)) {
+      for (const [hole, [lat, lng]] of Object.entries(teeCoords)) {
         const d = calculateDistance(currentLat, currentLng, lat, lng);
         if (d < shortestDistance) {
           shortestDistance = d;
@@ -87,10 +86,34 @@
         }
       }
 
-      const [nearestLat, nearestLng] = holeCoords[nearestHole];
-      const distanceYards = (shortestDistance * 1.09361).toFixed(1);
+      const holeCoords = {
+        1: [37.872972, 23.745222],
+        2: [37.869878, 23.745752],
+        3: [37.872799, 23.749097],
+        4: [37.870508, 23.747861],
+        5: [37.871353, 23.747702],
+        6: [37.868245, 23.745087],
+        7: [37.872509, 23.744781],
+        8: [37.872088, 23.743959],
+        9: [37.875741, 23.744238],
+        10: [37.872698, 23.745887],
+        11: [37.873634, 23.749619],
+        12: [37.874012, 23.748292],
+        13: [37.877053, 23.749069],
+        14: [37.873509, 23.747084],
+        15: [37.876446, 23.745403],
+        16: [37.876524, 23.746613],
+        17: [37.877746, 23.749302],
+        18: [37.876899, 23.745765]
+      };
 
-      document.getElementById("result").innerText = `가장 가까운 홀: ${nearestHole}번홀\n그린까지 거리: ${distanceYards} 야드`;
+      const [greenLat, greenLng] = holeCoords[nearestHole];
+      const distanceToGreen = calculateDistance(currentLat, currentLng, greenLat, greenLng);
+      const distanceYards = (distanceToGreen * 1.09361).toFixed(1);
+
+      document.getElementById("result").innerText = `가장 가까운 홀: ${nearestHole}번홀
+그린까지 거리: ${distanceYards} 야드`;
+    }
     }
   </script>
 </body>
