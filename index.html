@@ -76,7 +76,7 @@
           currentLat = position.coords.latitude;
           currentLng = position.coords.longitude;
           document.getElementById("current").innerText = `현재 위치: 위도 ${currentLat}, 경도 ${currentLng}`;
-          calculateDistance();
+          findNearestGreenAndCalculate();
         }, error => {
           alert("위치 정보를 가져올 수 없습니다: " + error.message);
         });
@@ -85,49 +85,52 @@
       }
     }
 
+    function toRadians(deg) {
+      return deg * Math.PI / 180;
+    }
+
+    function calculateDistance(lat1, lng1, lat2, lng2) {
+      const R = 6371e3;
+      const φ1 = toRadians(lat1);
+      const φ2 = toRadians(lat2);
+      const Δφ = toRadians(lat2 - lat1);
+      const Δλ = toRadians(lng2 - lng1);
+
+      const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+                Math.cos(φ1) * Math.cos(φ2) *
+                Math.sin(Δλ/2) * Math.sin(Δλ/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c;
+    }
+
+    function findNearestGreenAndCalculate() {
+      let nearestHole = null;
+      let shortestDistance = Infinity;
+
+      for (const [hole, [lat, lng]] of Object.entries(holeCoords)) {
+        const d = calculateDistance(currentLat, currentLng, lat, lng);
+        if (d < shortestDistance) {
+          shortestDistance = d;
+          nearestHole = hole;
+        }
+      }
+
+      const [nearestLat, nearestLng] = holeCoords[nearestHole];
+      const distanceYards = (shortestDistance * 1.09361).toFixed(1);
+
+      document.getElementById("green-lat").value = nearestLat;
+      document.getElementById("green-lng").value = nearestLng;
+      document.getElementById("hole-select").value = nearestHole;
+
+      document.getElementById("result").innerText = `가장 가까운 홀: ${nearestHole}번홀\n그린까지 거리: ${distanceYards} 야드`;
+    }
+
     function setGreenCoordinates() {
       const hole = document.getElementById("hole-select").value;
       if (holeCoords[hole]) {
         document.getElementById("green-lat").value = holeCoords[hole][0];
         document.getElementById("green-lng").value = holeCoords[hole][1];
       }
-    }
-
-    function toRadians(deg) {
-      return deg * Math.PI / 180;
-    }
-
-    function calculateDistance() {
-      const greenLat = parseFloat(document.getElementById("green-lat").value);
-      const greenLng = parseFloat(document.getElementById("green-lng").value);
-
-      if (currentLat === null || currentLng === null) {
-        alert("먼저 현재 위치를 확인하세요.");
-        return;
-      }
-
-      const R = 6371e3;
-      const φ1 = toRadians(currentLat);
-      const φ2 = toRadians(greenLat);
-      const Δφ = toRadians(greenLat - currentLat);
-      const Δλ = toRadians(greenLng - currentLng);
-
-      const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
-                Math.cos(φ1) * Math.cos(φ2) *
-                Math.sin(Δλ/2) * Math.sin(Δλ/2);
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-      const distance = R * c;
-
-      const distanceYards = (distance * 1.09361).toFixed(1);
-
-      // 바람 보정: 정면 2.5m/s 가정 (예시)
-      const headwind = 2.5; // m/s
-      const correctionYards = (headwind * 6).toFixed(1);
-      const adjustedYards = (parseFloat(distanceYards) + parseFloat(correctionYards)).toFixed(1);
-
-      document.getElementById("result").innerHTML =
-        `원거리: ${distanceYards} 야드<br>` +
-        `바람 보정 거리: ${adjustedYards} 야드 (정면 바람 ${headwind}m/s)`;
     }
   </script>
 </body>
