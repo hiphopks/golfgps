@@ -20,8 +20,11 @@
   <script>
     let currentLat = null;
     let currentLng = null;
+    window.onload = () => {
+      document.querySelector('button').addEventListener('click', getLocationAndCalculate);
+    };
 
-    const teeCoords = {};
+    // const teeCoords = {}; // 티박스 사용 안함
 
     function getLocationAndCalculate() {
       if (navigator.geolocation) {
