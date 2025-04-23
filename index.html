@@ -116,8 +116,7 @@
       const distanceToGreen = calculateDistance(currentLat, currentLng, targetGreenLat, targetGreenLng);
       const distanceYards = (distanceToGreen * 1.09361).toFixed(1);
 
-      document.getElementById("result").innerText = `가장 가까운 홀(경로 기준): ${nearestHole}번홀
-그린까지 거리: ${distanceYards} 야드`;
+      document.getElementById("result").innerHTML = `가장 가까운 홀(경로 기준): ${nearestHole}번홀<br>그린까지 거리: ${distanceYards} 야드`;
     }
 
     function distanceToLine(px, py, x1, y1, x2, y2) {
