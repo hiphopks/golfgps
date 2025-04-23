@@ -86,9 +86,38 @@
       }
 
       if (nearestHole) {
-        document.getElementById("result").innerHTML = `현재 위치는 ${nearestHole}번홀 내에 있습니다.`;
+        const greenCenters = {
+          1: [37.872972, 23.745222],
+          2: [37.869878, 23.745752],
+          3: [37.872799, 23.749097],
+          4: [37.870508, 23.747861],
+          5: [37.871353, 23.747702],
+          6: [37.868245, 23.745087],
+          7: [37.872509, 23.744781],
+          8: [37.872088, 23.743959],
+          9: [37.875741, 23.744238],
+          10: [37.872698, 23.745887],
+          11: [37.873634, 23.749619],
+          12: [37.874012, 23.748292],
+          13: [37.877053, 23.749069],
+          14: [37.873509, 23.747084],
+          15: [37.876446, 23.745403],
+          16: [37.876524, 23.746613],
+          17: [37.877746, 23.749302],
+          18: [37.876899, 23.745765]
+        };
+
+        const [greenLat, greenLng] = greenCenters[nearestHole];
+        const meters = calculateDistance(currentLat, currentLng, greenLat, greenLng);
+        const yards = (meters * 1.09361).toFixed(1);
+
+        document.getElementById("result").innerHTML = `현재 위치는 ${nearestHole}번홀 내에 있습니다.
+그린까지 거리: ${yards} 야드`;
       } else {
-        document.getElementById("result").innerHTML = `현재 위치가 어떤 홀 내부에도 없습니다.`;
+        const meters = calculateDistance(currentLat, currentLng, 37.872972, 23.745222);
+        const yards = (meters * 1.09361).toFixed(1);
+        document.getElementById("result").innerHTML = `현재 위치가 어떤 홀 내부에도 없습니다.
+1번홀 그린까지 거리: ${yards} 야드`; 
       }
     }
 
