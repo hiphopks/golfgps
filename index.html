@@ -116,8 +116,7 @@
       } else {
         const meters = calculateDistance(currentLat, currentLng, 37.872972, 23.745222);
         const yards = (meters * 1.09361).toFixed(1);
-        document.getElementById("result").innerHTML = `현재 위치가 어떤 홀 내부에도 없습니다.
-1번홀 그린까지 거리: ${yards} 야드`; 
+        document.getElementById("result").innerHTML = `현재 위치가 어떤 홀 내부에도 없습니다.<br>1번홀 그린까지 거리: <strong>${yards} 야드</strong>`; 
       }
     }
 
