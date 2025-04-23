@@ -13,35 +13,7 @@
 <body>
   <h2>골프 캐디 GPS 도우미 - Glyfada Golf Club</h2>
 
-  <label for="hole-select">홀 선택:</label>
-  <select id="hole-select" onchange="setGreenCoordinates()">
-    <option value="">-- 홀을 선택하세요 --</option>
-    <option value="1">1번홀</option>
-    <option value="2">2번홀</option>
-    <option value="3">3번홀</option>
-    <option value="4">4번홀</option>
-    <option value="5">5번홀</option>
-    <option value="6">6번홀</option>
-    <option value="7">7번홀</option>
-    <option value="8">8번홀</option>
-    <option value="9">9번홀</option>
-    <option value="10">10번홀</option>
-    <option value="11">11번홀</option>
-    <option value="12">12번홀</option>
-    <option value="13">13번홀</option>
-    <option value="14">14번홀</option>
-    <option value="15">15번홀</option>
-    <option value="16">16번홀</option>
-    <option value="17">17번홀</option>
-    <option value="18">18번홀</option>
-  </select>
-
-  <label for="green-lat">그린 위도:</label>
-  <input type="number" step="any" id="green-lat">
-  <label for="green-lng">그린 경도:</label>
-  <input type="number" step="any" id="green-lng">
-
-  <button onclick="getLocationAndCalculate()">현재 위치 확인 및 거리 계산</button>
+  <button onclick="getLocationAndCalculate()">현재 위치로 자동 홀 인식 및 거리 계산</button>
   <div id="current"></div>
   <div class="output" id="result"></div>
 
@@ -118,19 +90,7 @@
       const [nearestLat, nearestLng] = holeCoords[nearestHole];
       const distanceYards = (shortestDistance * 1.09361).toFixed(1);
 
-      document.getElementById("green-lat").value = nearestLat;
-      document.getElementById("green-lng").value = nearestLng;
-      document.getElementById("hole-select").value = nearestHole;
-
       document.getElementById("result").innerText = `가장 가까운 홀: ${nearestHole}번홀\n그린까지 거리: ${distanceYards} 야드`;
-    }
-
-    function setGreenCoordinates() {
-      const hole = document.getElementById("hole-select").value;
-      if (holeCoords[hole]) {
-        document.getElementById("green-lat").value = holeCoords[hole][0];
-        document.getElementById("green-lng").value = holeCoords[hole][1];
-      }
     }
   </script>
 </body>
