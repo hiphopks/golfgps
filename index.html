@@ -13,7 +13,7 @@
 <body>
   <h2>골프 캐디 GPS 도우미 - Glyfada Golf Club</h2>
 
-  <button onclick="getLocationAndCalculate()">현재 위치로 자동 홀 인식 및 거리 계산</button>
+  <button id="checkHole">현재 위치로 자동 홀 인식 및 거리 계산</button>
   <div id="current"></div>
   <div class="output" id="result"></div>
 
@@ -21,8 +21,8 @@
     let currentLat = null;
     let currentLng = null;
     window.onload = () => {
-      document.querySelector('button').addEventListener('click', getLocationAndCalculate);
-    };
+  document.getElementById('checkHole').addEventListener('click', getLocationAndCalculate);
+};
 
     // const teeCoords = {}; // 티박스 사용 안함
 
