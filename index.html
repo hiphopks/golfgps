@@ -75,17 +75,6 @@
     }
 
     function findNearestTeeAndCalculate() {
-      let nearestHole = null;
-      let shortestDistance = Infinity;
-
-      for (const [hole, [lat, lng]] of Object.entries(teeCoords)) {
-        const d = calculateDistance(currentLat, currentLng, lat, lng);
-        if (d < shortestDistance) {
-          shortestDistance = d;
-          nearestHole = hole;
-        }
-      }
-
       const holeCoords = {
         1: [37.872972, 23.745222],
         2: [37.869878, 23.745752],
@@ -107,12 +96,59 @@
         18: [37.876899, 23.745765]
       };
 
-      const [greenLat, greenLng] = holeCoords[nearestHole];
-      const distanceToGreen = calculateDistance(currentLat, currentLng, greenLat, greenLng);
+      let nearestHole = null;
+      let shortestDistanceToLine = Infinity;
+
+      for (const hole of Object.keys(teeCoords)) {
+        const [teeLat, teeLng] = teeCoords[hole];
+        const [greenLat, greenLng] = holeCoords[hole];
+
+        // 직선 거리 계산 (티박스 ~ 그린 선분에서 현재 위치까지 거리)
+        const d = distanceToLine(currentLat, currentLng, teeLat, teeLng, greenLat, greenLng);
+
+        if (d < shortestDistanceToLine) {
+          shortestDistanceToLine = d;
+          nearestHole = hole;
+        }
+      }
+
+      const [targetGreenLat, targetGreenLng] = holeCoords[nearestHole];
+      const distanceToGreen = calculateDistance(currentLat, currentLng, targetGreenLat, targetGreenLng);
       const distanceYards = (distanceToGreen * 1.09361).toFixed(1);
 
-      document.getElementById("result").innerText = `가장 가까운 홀: ${nearestHole}번홀
+      document.getElementById("result").innerText = `가장 가까운 홀(경로 기준): ${nearestHole}번홀
 그린까지 거리: ${distanceYards} 야드`;
+    }
+
+    function distanceToLine(px, py, x1, y1, x2, y2) {
+      // 현재 위치(px, py)에서 선분(x1, y1)-(x2, y2)까지의 최소 거리 (단순 유클리드 기반)
+      const A = px - x1;
+      const B = py - y1;
+      const C = x2 - x1;
+      const D = y2 - y1;
+
+      const dot = A * C + B * D;
+      const len_sq = C * C + D * D;
+      let param = -1;
+      if (len_sq !== 0) param = dot / len_sq;
+
+      let xx, yy;
+
+      if (param < 0) {
+        xx = x1;
+        yy = y1;
+      } else if (param > 1) {
+        xx = x2;
+        yy = y2;
+      } else {
+        xx = x1 + param * C;
+        yy = y1 + param * D;
+      }
+
+      const dx = px - xx;
+      const dy = py - yy;
+      return Math.sqrt(dx * dx + dy * dy) * 111139; // degree → meters
+    }
     }
     }
   </script>
