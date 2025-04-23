@@ -118,8 +118,10 @@
       const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
       const distance = R * c;
 
-      const distanceMeters = distance.toFixed(1);
-      document.getElementById("result").innerText = `그린까지 거리: ${distanceMeters} 미터`;
+      const distanceMeters = distance;
+      const distanceYards = (distance * 1.09361).toFixed(1);
+
+      document.getElementById("result").innerText = `그린까지 거리: ${distanceYards} 야드`;
     }
   </script>
 </body>
