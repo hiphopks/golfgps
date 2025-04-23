@@ -81,20 +81,22 @@
         document.getElementById("result").innerHTML = `현재 위치는 ${nearestHole}번홀 내에 있습니다.`;
       } else {
         document.getElementById("result").innerHTML = `현재 위치가 어떤 홀 내부에도 없습니다.`;
-          }
-  function isInsidePolygon(polygon, point) {
-  let x = point[1], y = point[0];
-  let inside = false;
-  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-    const xi = polygon[i][1], yi = polygon[i][0];
-    const xj = polygon[j][1], yj = polygon[j][0];
+      }
+    }
 
-    const intersect = ((yi > y) !== (yj > y)) &&
-      (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
-    if (intersect) inside = !inside;
-  }
-  return inside;
-}
-</script>
+    function isInsidePolygon(polygon, point) {
+      let x = point[1], y = point[0];
+      let inside = false;
+      for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+        const xi = polygon[i][1], yi = polygon[i][0];
+        const xj = polygon[j][1], yj = polygon[j][0];
+
+        const intersect = ((yi > y) !== (yj > y)) &&
+          (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+        if (intersect) inside = !inside;
+      }
+      return inside;
+    }
+  </script>
 </body>
 </html>
