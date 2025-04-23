@@ -118,10 +118,16 @@
       const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
       const distance = R * c;
 
-      const distanceMeters = distance;
       const distanceYards = (distance * 1.09361).toFixed(1);
 
-      document.getElementById("result").innerText = `그린까지 거리: ${distanceYards} 야드`;
+      // 바람 보정: 정면 2.5m/s 가정 (예시)
+      const headwind = 2.5; // m/s
+      const correctionYards = (headwind * 6).toFixed(1);
+      const adjustedYards = (parseFloat(distanceYards) + parseFloat(correctionYards)).toFixed(1);
+
+      document.getElementById("result").innerHTML =
+        `원거리: ${distanceYards} 야드<br>` +
+        `바람 보정 거리: ${adjustedYards} 야드 (정면 바람 ${headwind}m/s)`;
     }
   </script>
 </body>
